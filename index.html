@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Laporan SO Toko</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+<style>
+body{margin:0;font-family:Arial;background:#f4f6f8}
+.login,.app{max-width:380px;margin:70px auto;background:#fff;padding:20px;border-radius:6px}
+input,button{width:100%;padding:10px;margin-top:8px}
+button{border:none;color:#fff;cursor:pointer}
+.blue{background:#1976d2}
+.green{background:#2e7d32}
+.orange{background:#ef6c00}
+.red{background:#d32f2f}
+.gray{background:#546e7a}
+iframe{width:100%;height:80vh;border:1px solid #ccc;margin-top:10px}
+.countdown{background:#111;color:#0f0;padding:8px;text-align:center;margin:8px 0;font-weight:bold}
+small{color:#666}
+</style>
+</head>
+
+<body>
+<div id="root"></div>
+
+<script>
+/* =========================
+   ANTI INSPECT
+========================= */
+document.addEventListener("contextmenu",e=>e.preventDefault());
+document.onkeydown=e=>{
+ if(e.keyCode==123|| (e.ctrlKey&&e.shiftKey&&["I","J","C"].includes(e.key)) || (e.ctrlKey&&e.key==="U")){
+   e.preventDefault(); alert("Akses dibatasi");
+ }
+};
+setInterval(()=>{
+ if(window.outerWidth-window.innerWidth>160||window.outerHeight-window.innerHeight>160){
+   document.body.innerHTML="<h2 style='text-align:center;margin-top:40px'>Akses Diblokir</h2>";
+ }
+},1000);
+
+const {useState,useEffect}=React;
+
+/* =========================
+   DATE HELPER
+========================= */
+const today=()=>{
+ const d=new Date();
+ return String(d.getDate()).padStart(2,'0')+'-'+
+        String(d.getMonth()+1).padStart(2,'0')+'-'+
+        d.getFullYear();
+};
+
+/* =========================
+   USER DATABASE
+========================= */
+const USERS=[
+ {u:"USER01",s:"L001",e:"2026-01-26"},
+ {u:"USER02",s:"L002",e:"2026-01-26"},
+ {u:"USER03",s:"L003",e:"2026-01-26"},
+ {u:"USER04",s:"L004",e:"2026-01-26"},
+ {u:"USER05",s:"L005",e:"2026-01-26"},
+ {u:"USER06",s:"L006",e:"2026-01-26"},
+ {u:"USER07",s:"L007",e:"2026-01-26"},
+ {u:"USER08",s:"L008",e:"2026-01-26"},
+ {u:"USER09",s:"L009",e:"2026-01-26"},
+ {u:"USER10",s:"L010",e:"2026-01-26"},
+ {u:"USER11",s:"L011",e:"2026-01-26"},
+ {u:"USER12",s:"L012",e:"2026-01-26"},
+ {u:"USER13",s:"L013",e:"2026-01-26"},
+ {u:"USER14",s:"L014",e:"2026-01-26"},
+ {u:"USER15",s:"L015",e:"2026-01-26"},
+ {u:"USER16",s:"L016",e:"2026-01-26"},
+ {u:"USER17",s:"L017",e:"2026-01-26"},
+ {u:"USER18",s:"L018",e:"2026-01-26"},
+ {u:"USER19",s:"L019",e:"2026-01-26"},
+ {u:"USER20",s:"L020",e:"2026-01-26"}
+];
+
+function App(){
+ const[user,setUser]=useState(null);
+ const[username,setUsername]=useState("");
+ const[date,setDate]=useState("");
+ const[src,setSrc]=useState("");
+ const[countdown,setCountdown]=useState("");
+
+ /* =========================
+    COUNTDOWN + AUTO EXPIRE
+ ========================= */
+ useEffect(()=>{
+  if(!user) return;
+  const timer=setInterval(()=>{
+   const end=new Date(user.e+"T23:59:59");
+   const now=new Date();
+   const diff=end-now;
+   if(diff<=0){
+    alert("MASA AKTIF HABIS");
+    setUser(null);
+    clearInterval(timer);
+   }else{
+    const d=Math.floor(diff/86400000);
+    const h=Math.floor(diff%86400000/3600000);
+    const m=Math.floor(diff%3600000/60000);
+    const s=Math.floor(diff%60000/1000);
+    setCountdown(`${d} hari ${h} jam ${m} menit ${s} detik`);
+   }
+  },1000);
+  return()=>clearInterval(timer);
+ },[user]);
+
+ const login=()=>{
+  const u=USERS.find(x=>x.u===username.toUpperCase());
+  if(!u) return alert("USER TIDAK TERDAFTAR");
+  if(new Date()>new Date(u.e+"T23:59:59")) return alert("AKUN EXPIRED");
+  setUser(u);
+ };
+
+ const load=(t)=>{
+  let d=date;
+  if(t==="last") d=today();
+  if(!d && t!=="last") return alert("Pilih tanggal");
+  const url={
+   last:`https://app.alfastore.co.id/prd/api/rpt/laporan_so/csel_last_so_absolute_desc?storeId=${user.s}&dateSo=${d}`,
+   all:`https://app.alfastore.co.id/prd/api/rpt/laporan_so/csel_all_so_absolute_desc?storeId=${user.s}&dateSo=${d}`,
+   plu:`https://app.alfastore.co.id/prd/api/rpt/laporan/laporan_plu_tak_main_toko?storeId=${user.s}&dateTx=${d}`,
+   dgs:`https://app.alfastore.co.id/prd/api/rpt/laporan/rpt_plu_discontinue?storeId=${user.s}&dateSo=${d}&filter_tag=All`,
+   gab:`https://app.alfastore.co.id/prd/api/rpt/laporan/rep_gabungan_23_24?storeId=${user.s}&periode1=${d}`
+  };
+  setSrc(url[t]+"&t="+Date.now());
+ };
+
+ const refreshIframe=()=>{
+  if(src) setSrc(src.split("&t=")[0]+"&t="+Date.now());
+ };
+
+ if(!user){
+  return React.createElement("div",{className:"login"},
+   React.createElement("h3",null,"Login Laporan"),
+   React.createElement("input",{placeholder:"USERNAME",onChange:e=>setUsername(e.target.value)}),
+   React.createElement("button",{className:"blue",onClick:login},"LOGIN"),
+   React.createElement("small",null,"Akses terbatas")
+  );
+ }
+
+ return React.createElement("div",{className:"app"},
+  React.createElement("h3",null,"Selamat Datang ",user.u),
+  React.createElement("p",null,"Kode Toko: ",user.s),
+  React.createElement("div",{className:"countdown"},"Sisa Aktif: ",countdown),
+  React.createElement("input",{type:"date",onChange:e=>{
+   const d=new Date(e.target.value);
+   setDate(String(d.getDate()).padStart(2,'0')+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+d.getFullYear());
+  }}),
+  React.createElement("button",{className:"blue",onClick:()=>load("last")},"SO Terakhir"),
+  React.createElement("button",{className:"green",onClick:()=>load("all")},"SO Adjust"),
+  React.createElement("button",{className:"orange",onClick:()=>load("plu")},"PLU Tidak Main"),
+  React.createElement("button",{className:"gray",onClick:()=>load("dgs")},"Tag DGS"),
+  React.createElement("button",{className:"gray",onClick:()=>load("gab")},"Gabungan"),
+  React.createElement("button",{className:"blue",onClick:refreshIframe},"Refresh Laporan"),
+  src && React.createElement("iframe",{src}),
+  React.createElement("button",{className:"red",onClick:()=>setUser(null)},"LOGOUT")
+ );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
+</body>
+</html>
