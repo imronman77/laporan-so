@@ -2,25 +2,85 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Laporan SO Toko</title>
+<title>Laporan SO Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
 <style>
-body{margin:0;font-family:Arial;background:#f4f6f8}
-.login,.app{max-width:380px;margin:70px auto;background:#fff;padding:20px;border-radius:6px}
-input,button{width:100%;padding:10px;margin-top:8px}
-button{border:none;color:#fff;cursor:pointer}
-.blue{background:#1976d2}
-.green{background:#2e7d32}
-.orange{background:#ef6c00}
-.red{background:#d32f2f}
-.gray{background:#546e7a}
-iframe{width:100%;height:80vh;border:1px solid #ccc;margin-top:10px}
-.countdown{background:#111;color:#0f0;padding:8px;text-align:center;margin:8px 0;font-weight:bold}
-small{color:#666}
+:root{
+  --primary:#1e88e5;
+  --success:#43a047;
+  --warning:#fb8c00;
+  --danger:#e53935;
+  --dark:#263238;
+}
+body{
+  margin:0;
+  font-family:Segoe UI,Arial;
+  background:#eef2f6;
+}
+.card{
+  background:#fff;
+  border-radius:8px;
+  box-shadow:0 4px 12px rgba(0,0,0,.1);
+  padding:20px;
+}
+.login{
+  max-width:360px;
+  margin:120px auto;
+}
+.dashboard{
+  max-width:1100px;
+  margin:20px auto;
+}
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.header h2{margin:0;color:var(--dark)}
+.badge{
+  padding:6px 10px;
+  border-radius:4px;
+  background:#000;
+  color:#0f0;
+  font-size:13px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:10px;
+  margin-top:15px;
+}
+button,input{
+  padding:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+button{
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+}
+.primary{background:var(--primary)}
+.success{background:var(--success)}
+.warning{background:var(--warning)}
+.danger{background:var(--danger)}
+.dark{background:var(--dark)}
+iframe{
+  width:100%;
+  height:75vh;
+  border-radius:6px;
+  border:1px solid #ccc;
+  margin-top:15px;
+}
+.footer{
+  margin-top:10px;
+  text-align:right;
+}
 </style>
 </head>
 
@@ -33,52 +93,35 @@ small{color:#666}
 ========================= */
 document.addEventListener("contextmenu",e=>e.preventDefault());
 document.onkeydown=e=>{
- if(e.keyCode==123|| (e.ctrlKey&&e.shiftKey&&["I","J","C"].includes(e.key)) || (e.ctrlKey&&e.key==="U")){
+ if(e.keyCode===123 || (e.ctrlKey&&e.shiftKey&&["I","J","C"].includes(e.key)) || (e.ctrlKey&&e.key==="U")){
    e.preventDefault(); alert("Akses dibatasi");
  }
 };
 setInterval(()=>{
  if(window.outerWidth-window.innerWidth>160||window.outerHeight-window.innerHeight>160){
-   document.body.innerHTML="<h2 style='text-align:center;margin-top:40px'>Akses Diblokir</h2>";
+   document.body.innerHTML="<h2 style='text-align:center;margin-top:40px'>AKSES DIBLOKIR</h2>";
  }
-},1000);
+},1200);
 
 const {useState,useEffect}=React;
 
 /* =========================
    DATE HELPER
 ========================= */
-const today=()=>{
- const d=new Date();
- return String(d.getDate()).padStart(2,'0')+'-'+
-        String(d.getMonth()+1).padStart(2,'0')+'-'+
-        d.getFullYear();
+const formatDate=d=>{
+ return String(d.getDate()).padStart(2,"0")+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+d.getFullYear();
 };
+const today=()=>formatDate(new Date());
 
 /* =========================
-   USER DATABASE
+   5 USER FINAL
 ========================= */
 const USERS=[
- {u:"USER01",s:"L001",e:"2026-01-26"},
- {u:"USER02",s:"L002",e:"2026-01-26"},
- {u:"USER03",s:"L003",e:"2026-01-26"},
- {u:"USER04",s:"L004",e:"2026-01-26"},
- {u:"USER05",s:"L005",e:"2026-01-26"},
- {u:"USER06",s:"L006",e:"2026-01-26"},
- {u:"USER07",s:"L007",e:"2026-01-26"},
- {u:"USER08",s:"L008",e:"2026-01-26"},
- {u:"USER09",s:"L009",e:"2026-01-26"},
- {u:"USER10",s:"L010",e:"2026-01-26"},
- {u:"USER11",s:"L011",e:"2026-01-26"},
- {u:"USER12",s:"L012",e:"2026-01-26"},
- {u:"USER13",s:"L013",e:"2026-01-26"},
- {u:"USER14",s:"L014",e:"2026-01-26"},
- {u:"USER15",s:"L015",e:"2026-01-26"},
- {u:"USER16",s:"L016",e:"2026-01-26"},
- {u:"USER17",s:"L017",e:"2026-01-26"},
- {u:"USER18",s:"L018",e:"2026-01-26"},
- {u:"USER19",s:"L019",e:"2026-01-26"},
- {u:"USER20",s:"L020",e:"2026-01-26"}
+ {u:"UD66",s:"UD66",e:"2026-01-26"},
+ {u:"USER02",s:"L787",e:"2026-01-26"},
+ {u:"USER03",s:"1VC6",e:"2026-01-26"},
+ {u:"USER04",s:"L123",e:"2026-01-26"},
+ {u:"USER05",s:"L999",e:"2026-01-26"}
 ];
 
 function App(){
@@ -89,14 +132,13 @@ function App(){
  const[countdown,setCountdown]=useState("");
 
  /* =========================
-    COUNTDOWN + AUTO EXPIRE
+    COUNTDOWN + AUTO LOGOUT
  ========================= */
  useEffect(()=>{
   if(!user) return;
   const timer=setInterval(()=>{
    const end=new Date(user.e+"T23:59:59");
-   const now=new Date();
-   const diff=end-now;
+   const diff=end-new Date();
    if(diff<=0){
     alert("MASA AKTIF HABIS");
     setUser(null);
@@ -119,7 +161,7 @@ function App(){
   setUser(u);
  };
 
- const load=(t)=>{
+ const load=t=>{
   let d=date;
   if(t==="last") d=today();
   if(!d && t!=="last") return alert("Pilih tanggal");
@@ -133,39 +175,51 @@ function App(){
   setSrc(url[t]+"&t="+Date.now());
  };
 
- const refreshIframe=()=>{
+ const refresh=()=>{
   if(src) setSrc(src.split("&t=")[0]+"&t="+Date.now());
  };
 
+ /* =========================
+    LOGIN
+ ========================= */
  if(!user){
-  return React.createElement("div",{className:"login"},
-   React.createElement("h3",null,"Login Laporan"),
+  return React.createElement("div",{className:"login card"},
+   React.createElement("h2",null,"Login Dashboard"),
    React.createElement("input",{placeholder:"USERNAME",onChange:e=>setUsername(e.target.value)}),
-   React.createElement("button",{className:"blue",onClick:login},"LOGIN"),
-   React.createElement("small",null,"Akses terbatas")
+   React.createElement("button",{className:"primary",onClick:login},"LOGIN")
   );
  }
 
- return React.createElement("div",{className:"app"},
-  React.createElement("h3",null,"Selamat Datang ",user.u),
-  React.createElement("p",null,"Kode Toko: ",user.s),
-  React.createElement("div",{className:"countdown"},"Sisa Aktif: ",countdown),
-  React.createElement("input",{type:"date",onChange:e=>{
-   const d=new Date(e.target.value);
-   setDate(String(d.getDate()).padStart(2,'0')+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+d.getFullYear());
-  }}),
-  React.createElement("button",{className:"blue",onClick:()=>load("last")},"SO Terakhir"),
-  React.createElement("button",{className:"green",onClick:()=>load("all")},"SO Adjust"),
-  React.createElement("button",{className:"orange",onClick:()=>load("plu")},"PLU Tidak Main"),
-  React.createElement("button",{className:"gray",onClick:()=>load("dgs")},"Tag DGS"),
-  React.createElement("button",{className:"gray",onClick:()=>load("gab")},"Gabungan"),
-  React.createElement("button",{className:"blue",onClick:refreshIframe},"Refresh Laporan"),
+ /* =========================
+    DASHBOARD
+ ========================= */
+ return React.createElement("div",{className:"dashboard card"},
+  React.createElement("div",{className:"header"},
+   React.createElement("h2",null,"Dashboard Laporan"),
+   React.createElement("div",{className:"badge"},countdown)
+  ),
+  React.createElement("p",null,"User: ",user.u," | Toko: ",user.s),
+  React.createElement("input",{type:"date",onChange:e=>setDate(formatDate(new Date(e.target.value)))}),
+
+  React.createElement("div",{className:"grid"},
+   React.createElement("button",{className:"primary",onClick:()=>load("last")},"SO Terakhir"),
+   React.createElement("button",{className:"success",onClick:()=>load("all")},"SO Adjust"),
+   React.createElement("button",{className:"warning",onClick:()=>load("plu")},"PLU Tidak Main"),
+   React.createElement("button",{className:"dark",onClick:()=>load("dgs")},"Tag DGS"),
+   React.createElement("button",{className:"danger",onClick:()=>load("gab")},"Gabungan"),
+   React.createElement("button",{className:"primary",onClick:refresh},"Refresh")
+  ),
+
   src && React.createElement("iframe",{src}),
-  React.createElement("button",{className:"red",onClick:()=>setUser(null)},"LOGOUT")
+
+  React.createElement("div",{className:"footer"},
+   React.createElement("button",{className:"danger",onClick:()=>setUser(null)},"Logout")
+  )
  );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+ReactDOM.createRoot(document.getElementById("root"))
+.render(React.createElement(App));
 </script>
 </body>
 </html>
